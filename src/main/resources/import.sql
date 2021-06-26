@@ -1,0 +1,2 @@
+USE heroku_486704bd04eaaa1;
+INSERT INTO ASSOCIADO (NOME,CPF) VALUES ('Erinaldo Pereira','01234567890');

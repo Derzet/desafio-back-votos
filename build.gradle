@@ -6,17 +6,44 @@ plugins {
 
 group = 'com.voyager.mt'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '16'
+sourceCompatibility = '11'
 
 repositories {
 	mavenCentral()
-}
 
+
+}
+ext {
+	versionMapStruct = "1.4.2.Final"
+}
 dependencies {
+	annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.20'
+	annotationProcessor "org.mapstruct:mapstruct-processor:${versionMapStruct}"
+	compileOnly 'org.projectlombok:lombok:1.18.2'
 	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.5.1'
+	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.25'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.5.1'
+	implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.5.2.Final'
+	implementation "org.mapstruct:mapstruct:${versionMapStruct}"
+	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.5.2'
+
+
+	testAnnotationProcessor "org.mapstruct:mapstruct-processor:${versionMapStruct}"
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.4.0'
+	testImplementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+	testImplementation group: 'junit', name: 'junit', version: '4.13.2'
 }
 
 test {
 	useJUnitPlatform()
+}
+
+compileJava {
+	options.compilerArgs = [
+			'-Amapstruct.defaultComponentModel=spring'
+	]
 }

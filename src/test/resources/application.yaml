@@ -1,0 +1,10 @@
+spring:
+  active:
+    profile: test
+  datasource:
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: sa
+    platform: h2
+  jpa.hibernate.ddl-auto: create
+  h2.console.enabled: true
