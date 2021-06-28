@@ -42,11 +42,11 @@ public interface PautaController {
     @PostMapping(path = "/voto")
     VotoDTO votaPauta(@Valid @RequestBody VotoDTO votoDTO);
 
-    @ApiOperation(value = "Obtem resultado pauta", response = ResultadoDTO.class)
+    @ApiOperation(value = "Obtem resultado pauta calculado através dos votos", response = ResultadoDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Operação realizada com sucesso", response = ResultadoDTO.class),
             @ApiResponse(code = 404, message = "Nao encontrado", response = Void.class),
     })
-    @GetMapping(path = "/{idPauta}/resultado")
+    @PostMapping(path = "/{idPauta}/resultado")
     ResultadoDTO resultadoPauta(@PathVariable Long idPauta);
 }

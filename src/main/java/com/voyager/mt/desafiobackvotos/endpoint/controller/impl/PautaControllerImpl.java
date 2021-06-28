@@ -37,27 +37,27 @@ public class PautaControllerImpl implements PautaController {
     @ResponseBody
     @PostMapping
     public PautaDTO criaPauta(@Valid @RequestBody PautaDTO pautaDTO) {
-        Pauta pauta = pautaMapper.DTOparaEntity(pautaDTO);
-        return pautaMapper.EntityparaDTO(pautaService.criaPauta(pauta));
+        Pauta pauta = pautaMapper.dTOparaEntity(pautaDTO);
+        return pautaMapper.entityparaDTO(pautaService.criaPauta(pauta));
     }
 
     @Override
     @PutMapping(path = "/{idPauta}/abertura")
     public PautaDTO abreSessaoPauta(@RequestHeader(name = "Data-expiracao-sessao", required = false) String dataExpiracaoSessao,
                                     @PathVariable Long idPauta) {
-        return pautaMapper.EntityparaDTO(pautaService.abreSessaoPauta(idPauta, dataExpiracaoSessao));
+        return pautaMapper.entityparaDTO(pautaService.abreSessaoPauta(idPauta, dataExpiracaoSessao));
     }
 
     @PostMapping(path = "/voto")
     public VotoDTO votaPauta(@Valid @RequestBody VotoDTO votoDTO) {
-        Voto voto = votoMapper.DTOparaEntity(votoDTO);
-        return votoMapper.EntityparaDTO(pautaService.votaEmPauta(voto));
+        Voto voto = votoMapper.dTOparaEntity(votoDTO);
+        return votoMapper.entityparaDTO(pautaService.votaEmPauta(voto));
     }
 
     @Override
-    @GetMapping(path = "/{idPauta}/resultado")
+    @PostMapping(path = "/{idPauta}/resultado")
     public ResultadoDTO resultadoPauta(@PathVariable Long idPauta) {
-        return resultadoMapper.EntityparaDTO(pautaService.obtemResultadoPauta(idPauta));
+        return resultadoMapper.entityparaDTO(pautaService.obtemResultadoPauta(idPauta));
     }
 
 }
