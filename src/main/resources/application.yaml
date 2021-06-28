@@ -9,7 +9,7 @@ spring:
   jpa:
     properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
     # Hibernate ddl auto (create, create-drop, validate, update)
-    hibernate.ddl-auto: create-drop
+    hibernate.ddl-auto: validate
     show-sql: true
   datasource:
     url: jdbc:mysql://b15bdf1049829a:72ddadf2@us-cdbr-east-04.cleardb.com/heroku_486704bd04eaaa1?reconnect=true
