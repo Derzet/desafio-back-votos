@@ -12,7 +12,9 @@ public interface VotoMapper {
     @Mapping(source = "associadoId", target = "votoPK.associadoId")
     @Mapping(source = "pautaId", target = "votoPK.pautaId")
     @Mapping(target = "dataEvento", dateFormat = "HH:mm:ss dd-MM-yyyy")
-    Voto DTOparaEntity(VotoDTO votoDTO);
+    Voto dTOparaEntity(VotoDTO votoDTO);
 
-    VotoDTO EntityparaDTO(Voto voto);
+    @Mapping(source = "votoPK.associadoId", target = "associadoId")
+    @Mapping(source = "votoPK.pautaId", target = "pautaId")
+    VotoDTO entityparaDTO(Voto voto);
 }

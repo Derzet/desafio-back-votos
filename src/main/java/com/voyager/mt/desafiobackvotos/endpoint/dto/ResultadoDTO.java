@@ -1,5 +1,6 @@
 package com.voyager.mt.desafiobackvotos.endpoint.dto;
 
+import com.voyager.mt.desafiobackvotos.model.enume.ResultadoTipo;
 import lombok.*;
 
 @Builder
@@ -9,9 +10,9 @@ import lombok.*;
 @Setter
 public class ResultadoDTO {
 
-    private Long votosSim;
+    private Long numeroVotosSim;
 
-    private Long votosNao;
+    private Long numeroVotosNao;
 
-    private String resultado;
+    private ResultadoTipo tipo;
 }

@@ -1,5 +1,7 @@
 package com.voyager.mt.desafiobackvotos.model.entity;
 
+import com.voyager.mt.desafiobackvotos.model.converter.ResultadoTipoJPAConverter;
+import com.voyager.mt.desafiobackvotos.model.enume.ResultadoTipo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,11 +27,12 @@ public class Resultado {
     @ManyToOne
     private Pauta pauta;
 
-    private Long votosSim;
+    private Long numeroVotosSim;
 
-    private Long votosNao;
+    private Long numeroVotosNao;
 
-    private String resultado;
+    @Convert(converter = ResultadoTipoJPAConverter.class)
+    private ResultadoTipo tipo;
 
     @CreatedDate
     private LocalDate dataCriacao;

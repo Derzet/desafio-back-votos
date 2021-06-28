@@ -1,21 +1,24 @@
 package com.voyager.mt.desafiobackvotos.service.impl;
 
 import com.voyager.mt.desafiobackvotos.exception.*;
+import com.voyager.mt.desafiobackvotos.model.converter.ConverterUtil;
 import com.voyager.mt.desafiobackvotos.model.entity.Pauta;
 import com.voyager.mt.desafiobackvotos.model.entity.Resultado;
 import com.voyager.mt.desafiobackvotos.model.entity.Voto;
+import com.voyager.mt.desafiobackvotos.model.enume.ResultadoTipo;
+import com.voyager.mt.desafiobackvotos.model.enume.VotoTipo;
 import com.voyager.mt.desafiobackvotos.repository.AssociadoRepository;
 import com.voyager.mt.desafiobackvotos.repository.PautaRepository;
 import com.voyager.mt.desafiobackvotos.repository.ResultadoRepository;
 import com.voyager.mt.desafiobackvotos.repository.VotoRepository;
+import com.voyager.mt.desafiobackvotos.repository.custom.group.VotoGroup;
 import com.voyager.mt.desafiobackvotos.service.PautaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Map;
+import java.util.List;
 
 @Service
 @Transactional
@@ -43,17 +46,17 @@ public class PautaServiceImpl implements PautaService {
 
     public Pauta abreSessaoPauta(final Long idPauta, final String dataExpiracaoSessao) {
         Pauta pauta = pautaRepository.findById(idPauta).orElseThrow(PautaNaoEncontradaException::new);
-        LocalDateTime dataExpiracaoSessaoF =
-                (dataExpiracaoSessao != null) ? converteStringParaLocalDateTime(dataExpiracaoSessao) : LocalDateTime.now().plusMinutes(1);
-        pauta.setDataExpiracaoSessao(dataExpiracaoSessaoF);
+        LocalDateTime dataExpiracaoSessaoFinal =
+                (dataExpiracaoSessao != null) ? ConverterUtil.converteStringParaLocalDateTime(dataExpiracaoSessao) : LocalDateTime.now().plusMinutes(1);
+        pauta.setDataExpiracaoSessao(dataExpiracaoSessaoFinal);
         return pautaRepository.save(pauta);
     }
 
-    public Voto votaEmPauta(Voto voto) {
+    public Voto votaEmPauta(final Voto voto) {
         if (!associadoRepository.existsById(voto.getVotoPK().getAssociadoId())) {
             throw new AssociadoNaoEncontradoException();
         }
-        LocalDateTime dataExpiracaoSessao = pautaRepository.findById(voto.getVotoPK().getAssociadoId())
+        LocalDateTime dataExpiracaoSessao = pautaRepository.findById(voto.getVotoPK().getPautaId())
                 .orElseThrow(PautaNaoEncontradaException::new).getDataExpiracaoSessao();
 
         votoRepository.findById(voto.getVotoPK()).ifPresent(votoDuplicado ->
@@ -68,33 +71,35 @@ public class PautaServiceImpl implements PautaService {
         }
     }
 
-    public Resultado obtemResultadoPauta(Long idPauta) {
+    public Resultado obtemResultadoPauta(final Long idPauta) {
         pautaRepository.findById(idPauta).orElseThrow(PautaNaoEncontradaException::new);
-        Map<Character, Long> mapper = votoRepository.contaVotosPorTipo(idPauta);
-
-        Long quantidadeVotosNao = ((mapper.get('S') == null)? 0L : mapper.get('S'));
-        Long quantidadeVotosSim = ((mapper.get('N') == null)? 0L : mapper.get('N'));
+        List<VotoGroup> listaVotoGroup = votoRepository.contaVotosPorTipo(idPauta);
+        Long numeroVotosNao = calculaVotosPorTipo(listaVotoGroup, VotoTipo.NAO);
+        Long numeroVotosSim = calculaVotosPorTipo(listaVotoGroup, VotoTipo.SIM);
         Resultado resultado = Resultado.builder().pauta(Pauta.builder().id(idPauta).build())
-                .votosNao(quantidadeVotosNao)
-                .votosSim(quantidadeVotosSim)
-                .resultado(validaResultado(quantidadeVotosNao, quantidadeVotosSim)).build();
+                .numeroVotosNao(numeroVotosNao)
+                .numeroVotosSim(numeroVotosSim)
+                .tipo(calculaResultado(numeroVotosNao, numeroVotosSim)).build();
 
         return resultadoRepository.save(resultado);
     }
 
-    private LocalDateTime converteStringParaLocalDateTime(String dataExpiracaoSessao) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("mm:HH dd-MM-yyyy");
-        return LocalDateTime.parse(dataExpiracaoSessao, formatter);
-    }
-
-    private String validaResultado(Long quantidadeVotosNao, Long quantidadeVotosSim) {
-        if (quantidadeVotosNao == quantidadeVotosSim) {
-            return "EMPATADO";
+    private ResultadoTipo calculaResultado(final Long quantidadeVotosNao, final Long quantidadeVotosSim) {
+        if (quantidadeVotosNao.equals(quantidadeVotosSim)) {
+            return ResultadoTipo.EMPATADO;
         }
         if (quantidadeVotosNao < quantidadeVotosSim) {
-            return "APROVADO";
+            return ResultadoTipo.APROVADO;
         } else {
-            return "REJEITADA";
+            return ResultadoTipo.REJEITADO;
         }
     }
+
+    private Long calculaVotosPorTipo(List<VotoGroup> listaVotoGroup, VotoTipo votoTipo) {
+        return listaVotoGroup.stream().parallel()
+                .filter(v -> v.getTipo() == votoTipo)
+                .map(v -> v.getTotal()).findFirst().orElse(0L);
+    }
+
+
 }

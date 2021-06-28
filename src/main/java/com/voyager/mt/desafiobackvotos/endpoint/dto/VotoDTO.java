@@ -1,5 +1,6 @@
 package com.voyager.mt.desafiobackvotos.endpoint.dto;
 
+import com.voyager.mt.desafiobackvotos.model.enume.VotoTipo;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
@@ -15,7 +16,7 @@ public class VotoDTO {
 
     private Long pautaId;
 
-    private Character decissao;
+    private VotoTipo tipo;
 
     @NotNull
     private String dataEvento;

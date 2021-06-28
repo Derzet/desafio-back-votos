@@ -8,7 +8,7 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface PautaMapper {
 
-    Pauta DTOparaEntity(PautaDTO pautaDTO);
+    Pauta dTOparaEntity(PautaDTO pautaDTO);
 
-    PautaDTO EntityparaDTO(Pauta pauta);
+    PautaDTO entityparaDTO(Pauta pauta);
 }
